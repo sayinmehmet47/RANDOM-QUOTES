@@ -1,11 +1,30 @@
 import './App.css';
-import React, { useState, useEffect } from 'react';
+import Theme from "./Theme"
+import React, { useState, useEffect,createContext,useRef } from 'react';
+export const GeneralContext=createContext("bbb")
 
 function App() {
-  const [error, setError] = useState(null);
+
+
+  const [bgColor,setBgColor]=useState("blue")
   const [isLoaded, setIsLoaded] = useState(false);
   const [text, setText] = useState([]);
   const [author, setAuthor] = useState([]);
+
+  function random_bg_color() {
+    var x = Math.floor(Math.random() * 120);
+    var y = Math.floor(Math.random() * 120);
+    var z = Math.floor(Math.random() * 120);
+    const rgb = 'rgb(' + x + ',' + y + ',' + z + ')';
+    return rgb;
+  }
+
+  
+  const handleClick = ()=>{
+    setBgColor(random_bg_color());
+  }
+
+
 
   const getQuote = () => {
     const random = Math.floor(Math.random() * 1643 + 1);
@@ -18,12 +37,10 @@ function App() {
           setAuthor(result[random].author);
         },
 
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
+     
       );
   };
+  
 
   useEffect(() => {
     getQuote();
@@ -36,9 +53,17 @@ const redirect=()=>{
   ;
 
 }
-
   return (
     <div
+      style={{
+
+        color:bgColor,
+        transition: "all 2s ease",
+        WebkitTransition: "all 2s ease",
+        MozTransition: "all 1s ease"
+
+
+      }}
       className="d-flex flex-column  border border-primary w-50 shadow container"
       id="quote-box"
     >
@@ -48,7 +73,12 @@ const redirect=()=>{
       <h4 id="author" className="text-info text-end m-3">
         {author}
       </h4>
-      <button id="new-quote" className="btn btn-primary" onClick={getQuote}>
+      <button id="new-quote" className="btn btn-primary" onClick={() => {
+          getQuote();
+          handleClick()
+
+
+        }}>
         New Quote
       </button>
 
@@ -56,6 +86,9 @@ const redirect=()=>{
  id="tweet-quote" className="mt-5">
         <i className="fab fa-twitter fa-1x"></i>
       </a>
+  <GeneralContext.Provider   value={{ value: [text, setText], value2: [author, setAuthor],value3:[bgColor,setBgColor] }}>
+    <Theme />
+    </GeneralContext.Provider>     
     </div>
   );
 }
